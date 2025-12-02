@@ -57,6 +57,7 @@ def process_directory(directory_path, output_base_dir, base_scan_dir):
     """
     处理指定目录。如果能合并则合并，否则复制所有原图。
     """
+    directory_path = os.fspath(directory_path)
     offset_path = os.path.join(directory_path, "offset.json")
     if not os.path.exists(offset_path):
         return
@@ -168,8 +169,11 @@ def process_directory(directory_path, output_base_dir, base_scan_dir):
                     composite_img = overlay_image_opencv(composite_img, fg2_img, tuple(relative_coords_2))
 
         # 保存最终结果
-        cv2.imwrite(output_path, composite_img)
-        print(f"  成功保存合成图片：{os.path.basename(output_path)}")
+        try:
+            cv2.imwrite(output_path, composite_img)
+            print(f"  成功保存合成图片：{os.path.basename(output_path)}")
+        except Exception as e:
+            print(f"错误：无法写入图片 {output_path}。请检查输出目录权限。错误信息: {e}")
 
 
 def main():
@@ -192,7 +196,7 @@ def main():
             print(f"错误：指定的路径不是一个有效的目录：{base_dir}")
             continue
             
-        for root, dirs, files in os.walk(base_dir):
+        for root, dirs, files in os.walk(os.fspath(base_dir)):
             if "offset.json" in files:
                 process_directory(root, output_base_dir, base_dir)
 
