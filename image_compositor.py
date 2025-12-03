@@ -112,7 +112,7 @@ def process_directory(directory_path, output_base_dir, base_scan_dir):
     if not fg1_files and not fg2_files:
         # 只有背景图，没有前景图（1_* 或 2_*），只复制背景图。
         print("信息：只有背景图，没有前景图（1_* 或 2_*），只复制背景图。")
-        dest_path = os.path.join(output_dir, os.path.basename(background_path))
+        dest_path = os.path.join(output_dir, os.path.basename(directory_path)[2:]+"-"+os.path.basename(background_path))
         shutil.copy(background_path, dest_path)
         print(f"  复制背景原图：{os.path.basename(background_path)}")
         return
@@ -133,7 +133,7 @@ def process_directory(directory_path, output_base_dir, base_scan_dir):
     # 遍历所有组合并处理
     for fg1_path, fg2_path in combinations_to_process:
         
-        output_filename = "0-"
+        output_filename = os.path.basename(directory_path)[2:]+"-"
         if fg1_path:
             output_filename += f"{get_filename_key(fg1_path)}-"
         if fg2_path:
